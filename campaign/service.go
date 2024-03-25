@@ -26,6 +26,5 @@ func (s *service) GetCampaigns(userID int) ([]Campaign, error) {
 	if err != nil {
 		return campaigns, err
 	}
-
 	return campaigns, nil
 }
