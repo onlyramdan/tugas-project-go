@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
@@ -27,15 +26,12 @@ func main() {
 	userRepository := user.NewRepository(db)
 	campaignRepository := campaign.NewRepository(db)
 
+	authService := auth.NewJwtService()
 	userService := user.NewService(userRepository)
 	campaignService := campaign.NewService(campaignRepository)
 
-	campaigns, _ := campaignService.FindCampaigns(1)
-
-	fmt.Println(len(campaigns))
-
-	authService := auth.NewJwtService()
 	userHandler := handler.NewUserHandler(userService, authService)
+	campaignHandler := handler.NewCampagnHandler(campaignService)
 
 	router := gin.Default()
 	api := router.Group("/api/v1")
@@ -45,6 +41,8 @@ func main() {
 	api.POST("/sessions", userHandler.Login)
 	api.POST("/cek_email", userHandler.CekEmail)
 	api.POST("/upload_avatar", AuthMiddleware(authService, userService), userHandler.UploadAvatar)
+
+	api.GET("/campaigns", campaignHandler.GetCampaign)
 	router.Run()
 }
 
