@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
@@ -9,6 +10,7 @@ import (
 	"net/http"
 	"strings"
 	"tugas/auth"
+	"tugas/campaign"
 	"tugas/handler"
 	"tugas/helper"
 	"tugas/user"
@@ -23,6 +25,22 @@ func main() {
 	}
 
 	userRepository := user.NewRepository(db)
+	campaignRepository := campaign.NewRepository(db)
+
+	campaigns, err := campaignRepository.GetByUserID(1)
+
+	fmt.Println("======")
+	fmt.Println("======")
+	fmt.Println("======")
+	fmt.Println(len(campaigns))
+
+	for _, campaign := range campaigns {
+		fmt.Println(campaign.Name)
+		if len(campaign.CampaignImages) > 0 {
+			fmt.Println(campaign.CampaignImages[0].FileName)
+		}
+	}
+
 	userService := user.NewService(userRepository)
 	authService := auth.NewJwtService()
 	userHandler := handler.NewUserHandler(userService, authService)

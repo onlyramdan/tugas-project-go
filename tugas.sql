@@ -14,3 +14,31 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 DESC users;
+
+CREATE TABLE IF NOT EXISTS campaigns (
+     id INT NOT NULL AUTO_INCREMENT,
+     user_id INT NOT NULL,
+     name VARCHAR(255) NOT NULL,
+     short_description TEXT,
+     description TEXT,
+     perks TEXT,
+     backer_count INT DEFAULT 0,
+     goal_amount INT,
+     current_amount INT DEFAULT 0,
+     slug VARCHAR(255),
+     created_at DATETIME NOT NULL,
+     updated_at DATETIME NOT NULL,
+     PRIMARY KEY (id),
+     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS campaign_images (
+   id INT NOT NULL AUTO_INCREMENT,
+   campaign_id INT NOT NULL,
+   file_name VARCHAR(255),
+   is_primary INT,
+   created_at DATETIME NOT NULL,
+   updated_at DATETIME NOT NULL,
+   PRIMARY KEY (id),
+   FOREIGN KEY (campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE
+);
