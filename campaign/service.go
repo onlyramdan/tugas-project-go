@@ -47,10 +47,10 @@ func (s *service) CrateCampaign(input CreateCampaignInput) (Campaign, error) {
 	campaign.Description = input.Description
 	campaign.GoalAmount = input.GoalAmount
 	campaign.Perks = input.Perks
+	campaign.UserID = input.User.ID
+	campaign.S
 
 	// slug
-	campaign.UserID = input.User.ID
-
 	newCampaign, err := s.repository.Save(campaign)
 	if err != nil {
 		return newCampaign, err
