@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"tugas/campaign"
 	"tugas/helper"
+	"tugas/user"
 )
 
 type campagnHandler struct {
@@ -48,5 +49,34 @@ func (h *campagnHandler) GetCampaign(c *gin.Context) {
 	}
 
 	response := helper.APIresponse("Detail Of Campaign", http.StatusOK, "Success", campaign.FormatCampaignDetail(campaignDetail))
+	c.JSON(http.StatusOK, response)
+}
+
+func (h *campagnHandler) CampaignCreate(c *gin.Context) {
+
+	var input campaign.CreateCampaignInput
+
+	err := c.ShouldBindJSON(&input)
+
+	if err != nil {
+		errors := helper.FormatError(err)
+		msgError := gin.H{"errors": errors}
+		response := helper.APIresponse("Failed to Create Campaign", http.StatusBadRequest, "Error", msgError)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	currentUser := c.MustGet("currentUser").(user.User)
+	input.User = currentUser
+
+	newCampaign, err := h.campaignService.CreateCampaign(input)
+
+	if err != nil {
+		response := helper.APIresponse("Failed to Create Campaign", http.StatusBadRequest, "Error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := helper.APIresponse("Success Create Campaign", http.StatusOK, "Success", campaign.CampaignFormat(newCampaign))
 	c.JSON(http.StatusOK, response)
 }
