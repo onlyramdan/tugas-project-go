@@ -7,6 +7,7 @@ type Repository interface {
 	GetByUserID(userID int) ([]Campaign, error)
 	GetByID(ID int) (Campaign, error)
 	Save(campaign Campaign) (Campaign, error)
+	Update(campaign Campaign) (Campaign, error)
 }
 type repository struct {
 	db *gorm.DB
@@ -49,6 +50,17 @@ func (r *repository) GetByID(ID int) (Campaign, error) {
 
 func (r *repository) Save(campaign Campaign) (Campaign, error) {
 	err := r.db.Create(&campaign).Error
+	if err != nil {
+		return campaign, err
+	}
+
+	return campaign, nil
+}
+
+func (r *repository) Update(campaign Campaign) (Campaign, error) {
+
+	err := r.db.Save(&campaign).Error
+
 	if err != nil {
 		return campaign, err
 	}
